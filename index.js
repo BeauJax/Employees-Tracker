@@ -111,3 +111,63 @@ inquirer.prompt([
         })
 }
 
+//add user input
+function addEmployee() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newEmployeeFirst',
+            message: "Please enter employee's first name."
+        },
+        {
+            type: 'input',
+            name: 'newEmployeeLast',
+            message: "Please enter employee's last name."
+        },
+        {
+            type: 'list',
+            name: 'newEmployeeRole',
+            message: "Please choose employee's role id.",
+            choices: ['1', '2', '3', '4', '5', '6', '7', '8']
+        }
+    ])
+        .then((answers) =>
+            db.promise().query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answers.newEmployeeFirst, answers.newEmployeeLast, answers.newEmployeeRole, answers.newEmployeeManager], (err, result) => {
+                if (err) throw err
+            })).then(() => {
+                menu();
+            })
+    }
+    
+    //adds user input
+    function updateRole() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'chooseEmployee',
+            message: 'Choose the id of the employee to update.',
+            choices: ['1', '2', '3', '4', '5', '6', '7', '8']
+        },
+        {
+            type: 'list',
+            name: 'newRole',
+            message: 'Choose the id of the new role',
+            choices: ['1', '2', '3', '4', '5', '6', '7', '8']
+        }
+    ])
+        .then((answers) =>
+            db.promise().query('UPDATE employee SET role_id=? WHERE id=?', [answers.newRole, answers.chooseEmployee], (err, result) => {
+                if (err) throw err
+                console.table(result);
+            })).then(() => {
+                menu();
+            })
+    }
+    
+    
+    function quitMenu() {
+    console.log("Goodbye!");
+    process.exit();
+    }
+    
+    menu();
